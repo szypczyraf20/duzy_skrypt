@@ -11,6 +11,12 @@
 # 
 # Generative AI statement (keep ONE line below, delete the others):
 # * I did NOT use GenAI tools while developing this code.
-# * I used GenAI tools for support only (e.g., explanations, debugging, small snippets).
-# * I used GenAI tools to generate a significant portion of this code (>50%).
+
+#!/bin/bash
+while getopts "vh" TEST; do
+  case $TEST in
+    v) echo "Verbose" ;;
+    h) echo "Usage: " ;;
+  esac
+done
 cat /var/log/syslog | grep "rafal"
