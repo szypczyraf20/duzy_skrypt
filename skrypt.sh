@@ -35,9 +35,14 @@ n)
 
     last -f /var/log/wtmp.1 | grep rafal | tac | grep -E $FOR_GREP | tr -s " " | cut -d " " -f "1,4,5,6,7,8,9,10"
     ;;
+
 u)
+    echo "Liczba aplikacji powodującycj zdarzenia w pliku syslog"
     cat /var/log/syslog | cut -d " " -f 3 | sed "s#:\$##g" | sed "s#\[.*\]##" | sort | uniq -c
     ;;
 
+z)
+    echo "Obecnie zalogowani użytkownicy:"
+    who | tr -s " " | cut -d " " -f "1,3,4" | sed -E "s#(.*) (.*) (.*)#\1, początek sesji: \2 \3#"
 esac
 # Dodaj informacje kiedy miała miejsce ta sesja i jaki użytkownik ją miał.
