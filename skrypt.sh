@@ -19,7 +19,19 @@ VERBOSE="OFF"
     v) 
         VERBOSE="ON"
         ;;
-    h) echo "Usage: " 
+    h)
+        echo "SPOSÓB UŻYCIA: " 
+        echo "./skrypt.sh [OPCJE] [POLECENIE]"
+        echo
+        echo "OPCJE"
+        echo "-h  Wypisz tą wiadomość"
+        echo "-v  Tryb gadatliwy (verbose)"
+        echo
+        echo "POLECENIA"
+        echo "n  Najdłuższe sesje"
+        echo "u  Liczba aplikacji powodujących zdarzenia w pliku syslog"
+        echo "z  Obecnie zalogowani użytkownicy"
+        echo "f  Nieudane logowania"
         exit
         ;;
   esac
@@ -58,8 +70,15 @@ n)
     ;;
 
 u)
-    echo "Liczba aplikacji powodującycj zdarzenia w pliku syslog"
-    cat /var/log/syslog | cut -d " " -f 3 | sed "s#:\$##g" | sed "s#\[.*\]##" | sort | uniq -c | sed -E "s#(.*) (.*)#\2 \1#" | tr -s " "
+    if [ "$VERBOSE" = "ON" ]; then
+        echo "Liczba aplikacji powodującycj zdarzenia w pliku syslog"
+        cat /var/log/syslog | cut -d " " -f 3 | sed "s#:\$##g" | sed "s#\[.*\]##" | sort | uniq -c | sed -E "s#(.*) (.*)#\2 \1#" | tr -s " "
+        printf "Łącznie: "
+        cat /var/log/syslog | cut -d " " -f 3 | sed "s#:\$##g" | sed "s#\[.*\]##" | uniq | wc -l
+    else
+        echo "Liczba aplikacji powodującycj zdarzenia w pliku syslog"
+        cat /var/log/syslog | cut -d " " -f 3 | sed "s#:\$##g" | sed "s#\[.*\]##" | uniq | wc -l
+    fi
     ;;
 
 z)
