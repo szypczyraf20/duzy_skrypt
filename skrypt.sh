@@ -19,4 +19,8 @@ while getopts "vh" TEST; do
     h) echo "Usage: " ;;
   esac
 done
-cat /var/log/syslog | grep "rafal"
+SESSION_TIMES=`last -f /var/log/wtmp.1 | tail -n +3 | head -n -2 | grep rafal | tr -s " " | cut -d " " -f 10 | sed -E "     s#\((.*)\)#\1#" | sort`
+echo "Najdłuższe sesje:"
+printf '%s\n' "${SESSION_TIMES[@]}" | tail | tac
+# Dodaj informacje kiedy miała miejsce ta sesja i jaki użytkownik ją miał.
+# last | grep `last | tail -n +1 | grep "rafal" | tr -s " " | cut -d " " -f "10" | sed -E "s#\((.*)\)#\1#" | sort | tail -1`
