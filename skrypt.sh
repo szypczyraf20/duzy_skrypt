@@ -13,21 +13,34 @@
 # * I did NOT use GenAI tools while developing this code.
 
 #!/bin/bash
-while getopts "vh" TEST; do
-  case $TEST in
-    v) echo "Verbose" ;;
-    h) echo "Usage: " ;;
+while getopts "vh" OPCJE; do
+VERBOSE="OFF"
+  case $OPCJE in
+    v) 
+        VERBOSE="ON"
+        ;;
+    h) echo "Usage: " 
+        exit
+        ;;
   esac
 done
 
-case $1 in
+if [[ $VERBOSE == "ON" ]]; then
+    COMMAND=$2
+    COMMAND2=$3
+else
+    COMMAND=$1
+    COMMAND2=$2
+fi
+
+case $COMMAND in
 n)
     SESSION_TIMES=(`last -f /var/log/wtmp.1 | tail -n +3 | head -n -2 | grep rafal | tr -s " " | cut -d " " -f 10 | sed -E "s#\((.*)\)#\1#" | sort | tac`)
 
     echo "Najdłuższe sesje (w kolejności wystąpienia, sytuacje ex aquo nie rozstrzygane):"
 
     FOR_GREP=""
-    for (( I=0; I<$2; I++ ));
+    for (( I=0; I<$COMMAND2; I++ ));
     do
         FOR_GREP="${FOR_GREP}`printf "%s|" ${SESSION_TIMES[$I]}`"
     done
