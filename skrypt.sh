@@ -19,8 +19,19 @@ while getopts "vh" TEST; do
     h) echo "Usage: " ;;
   esac
 done
-SESSION_TIMES=`last -f /var/log/wtmp.1 | tail -n +3 | head -n -2 | grep rafal | tr -s " " | cut -d " " -f 10 | sed -E "     s#\((.*)\)#\1#" | sort`
-echo "Najdłuższe sesje:"
-printf '%s\n' "${SESSION_TIMES[@]}" | tail | tac
+
+SESSION_TIMES=(`last -f /var/log/wtmp.1 | tail -n +3 | head -n -2 | grep rafal | tr -s " " | cut -d " " -f 10 | sed -E "s#\((.*)\)#\1#" | sort | tac`)
+
+echo "Najdłuższe sesje (w kolejności wystąpienia, sytuacje ex aquo nie rozstrzygane):"
+
+FOR_GREP=""
+for (( I=0; I<$1; I++ ));
+do
+    FOR_GREP="${FOR_GREP}`printf "%s|" ${SESSION_TIMES[$I]}`"
+done
+FOR_GREP=`echo ${FOR_GREP::-1}`
+
+last -f /var/log/wtmp.1 | grep rafal | tac | grep -E $FOR_GREP | tr -s " " | cut -d " " -f "1,4,5,6,7,8,9,10"
+echo "--------"
+
 # Dodaj informacje kiedy miała miejsce ta sesja i jaki użytkownik ją miał.
-# last | grep `last | tail -n +1 | grep "rafal" | tr -s " " | cut -d " " -f "10" | sed -E "s#\((.*)\)#\1#" | sort | tail -1`
