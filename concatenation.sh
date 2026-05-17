@@ -14,7 +14,6 @@ case $COMMAND in
     *)
         cat $FILE
         ALL=($FILE.*)
-        # cat $FILE.*
         
         NON_GZ=""
         for ITEM in ${ALL[@]}; do
