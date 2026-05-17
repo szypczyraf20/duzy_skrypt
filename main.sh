@@ -15,5 +15,6 @@
 #!/bin/bash
 PATTERN=`cat config.txt`
 PARAMETERS="last -f /var/log/wtmp"
-./concatenation.sh $PARAMETERS | grep "$PATTERN" 
-./concatenation.sh $PARAMETERS | grep "$PATTERN" | wc -l | sed -E "s#(.*)#Liczba dopasowań: \1#"
+./concatenation.sh $PARAMETERS | grep -E "$PATTERN" 
+MATCHED=`./concatenation.sh $PARAMETERS | grep -E "$PATTERN" | wc -l` 
+echo "Liczba dopasowań: $MATCHED"
