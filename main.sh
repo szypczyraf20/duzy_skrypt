@@ -14,6 +14,6 @@
 
 #!/bin/bash
 PATTERN=`cat config.txt`
-cat /var/log/syslog | grep $PATTERN
-MATCHES=`cat /var/log/syslog | grep $PATTERN | wc -l`
-echo "Liczba dopasowań: $MATCHES"
+PARAMETERS="last -f /var/log/wtmp"
+./concatenation.sh $PARAMETERS | grep "$PATTERN" 
+./concatenation.sh $PARAMETERS | grep "$PATTERN" | wc -l | sed -E "s#(.*)#Liczba dopasowań: \1#"
