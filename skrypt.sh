@@ -1,20 +1,7 @@
-# Author           : Rafał Szypczyński, s208477@student.pg.edu.pl
-# Created On       : 28 IV 2026
-# Last Modified On : date 
-# Version          : 1
-#
-# Description      :
-# Duży skrypt Rafała Szypczyńskiego. Temat: Analiza plików dziennika
-#
-# Licensed under GPL (see /usr/share/common-licenses/GPL for more details
-# or contact # the Free Software Foundation for a copy)
-# 
-# Generative AI statement (keep ONE line below, delete the others):
-# * I did NOT use GenAI tools while developing this code.
-
 #!/bin/bash
-while getopts "vh" OPCJE; do
+# Stara część skryptu
 VERBOSE="OFF"
+while getopts "vhs" OPCJE; do
   case $OPCJE in
     v) 
         VERBOSE="ON"
@@ -28,11 +15,14 @@ VERBOSE="OFF"
         echo "-v  Tryb gadatliwy (verbose)"
         echo
         echo "POLECENIA"
-        echo "n  Najdłuższe sesje"
-        echo "u  Liczba aplikacji powodujących zdarzenia w pliku syslog"
-        echo "z  Obecnie zalogowani użytkownicy"
-        echo "f  Nieudane logowania"
+        echo "n [x] Najdłuższe x sesji"
+        echo "u     Liczba aplikacji powodujących zdarzenia w pliku syslog"
+        echo "z     Obecnie zalogowani użytkownicy"
+        echo "f     Nieudane logowania"
         exit
+        ;;
+    s)
+        continue
         ;;
   esac
 done
@@ -43,6 +33,9 @@ if [[ $VERBOSE == "ON" ]]; then
 else
     COMMAND=$1
     COMMAND2=$2
+    if [ "$COMMAND2" = "" ]; then
+        COMMAND2=0
+    fi
 fi
 
 case $COMMAND in
@@ -50,7 +43,7 @@ n)
     SESSION_TIMES=(`last -f /var/log/wtmp.1 | tail -n +3 | head -n -2 | grep rafal | tr -s " " | cut -d " " -f 10 | sed -E "s#\((.*)\)#\1#" | sort | tac`)
     if [ "$VERBOSE" = "ON" ]; then
 
-    echo "Najdłuższe sesje (w kolejności wystąpienia, sytuacje ex aquo nie rozstrzygane):"
+    echo "Najdłuższe x sesji (w kolejności wystąpienia, sytuacje ex aquo nie rozstrzygane):"
 
     FOR_GREP=""
     for (( I=0; I<$COMMAND2; I++ ));
@@ -61,8 +54,8 @@ n)
 
     last -f /var/log/wtmp.1 | grep rafal | tac | grep -E $FOR_GREP | tr -s " " | cut -d " " -f "1,4,5,6,7,8,9,10"
     else
-        echo "Najdłuższe sesje (gg:mm):"
-        for (( I=0; I<$COMMAND2; I++ ));
+        echo "Najdłuższe x sesji (gg:mm):"
+        for (( I=0; I<${COMMAND2}; I++ ));
         do
             printf "%s\n" ${SESSION_TIMES[$I]}
         done
